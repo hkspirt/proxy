@@ -7,7 +7,7 @@
 package internal
 
 import (
-	"etsy/util"
+	"github.com/hkspirt/proxy/util"
 	"fmt"
 	"io/ioutil"
 	"net/http"

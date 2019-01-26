@@ -7,7 +7,7 @@
 package internal
 
 import (
-	"etsy/util"
+	"github.com/hkspirt/proxy/util"
 	"net/http"
 	"net/url"
 	"regexp"
