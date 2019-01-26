@@ -47,7 +47,7 @@ func (self *proxy) start() {
 	self.proxies["Ip66"] = &internal.Ip66{Proxyer: internal.Proxyer{Url: "http://www.66ip.cn/mo.php?tqsl=50"}}                                        //ok
 	self.proxies["Proxylistplus"] = &internal.Proxylistplus{Proxyer: internal.Proxyer{Url: "https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1"}} //ok
 	self.proxies["Xicidaili_nn"] = &internal.Xicidaili{Proxyer: internal.Proxyer{Url: "http://www.xicidaili.com/nn"}}                                 //ok
-	self.proxies["Xicidaili2_nt"] = &internal.Xicidaili{Proxyer: internal.Proxyer{Url: "http://www.xicidaili.com/nt"}}                                //ok
+	self.proxies["Xicidaili_nt"] = &internal.Xicidaili{Proxyer: internal.Proxyer{Url: "http://www.xicidaili.com/nt"}}                                //ok
 
 	for _, px := range self.proxies {
 		tmp := px
