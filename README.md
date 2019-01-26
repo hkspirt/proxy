@@ -14,8 +14,9 @@ package main
   
 import (  
    "github.com/hkspirt/proxy"  
- "github.com/hkspirt/proxy/util" "time"  
-  _ "github.com/hkspirt/proxy"  
+   "github.com/hkspirt/proxy/util" 
+   "time"  
+   _ "github.com/hkspirt/proxy"  
 )  
   
 func main() {  
