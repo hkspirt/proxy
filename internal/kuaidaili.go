@@ -7,10 +7,8 @@
 package internal
 
 import (
-	"github.com/hkspirt/proxy/util"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"github.com/hkspirt/proxy/util"
 	"regexp"
 	"strings"
 )
@@ -24,24 +22,7 @@ func (self *Kuaidaili) Init() {
 }
 
 func (self *Kuaidaili) load() {
-	resp, err := http.DefaultClient.Get(self.Url)
-	if err != nil {
-		util.LogWarn("proxyer:%s http get err:%v", self.Url, err)
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		util.LogWarn("proxyer:%s http status err:%v", self.Url, resp.StatusCode)
-		return
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		util.LogWarn("proxyer:%s http read err:%v", self.Url, err)
-		return
-	}
-
+	data := self.httpGet()
 	proxies := self.regexp.FindAllSubmatch(data, -1)
 	if len(proxies) < 1 {
 		util.LogWarn("proxyer:%s regexp find failed", self.Url)

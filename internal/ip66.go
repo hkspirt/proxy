@@ -7,11 +7,9 @@
 package internal
 
 import (
-	"github.com/hkspirt/proxy/util"
 	"fmt"
+	"github.com/hkspirt/proxy/util"
 	"github.com/robertkrimen/otto"
-	"io/ioutil"
-	"net/http"
 	"regexp"
 	"strings"
 )
@@ -22,7 +20,6 @@ type Ip66 struct {
 	fun     *regexp.Regexp
 	cookie  *regexp.Regexp
 	jsRuner *otto.Otto
-	cookies string
 }
 
 func (self *Ip66) Init() {
@@ -34,40 +31,8 @@ func (self *Ip66) Init() {
 }
 
 func (self *Ip66) load() {
-	req, err := http.NewRequest(http.MethodGet, self.Url, nil)
-	if err != nil {
-		util.LogWarn("proxyer:%s new request err:%v", self.Url, err)
-		return
-	}
-	req.Header.Set("Cookie", self.cookies)
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		util.LogWarn("proxyer:%s http get err:%v", self.Url, err)
-		return
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == 521 {
-			data, err := ioutil.ReadAll(resp.Body)
-			defer resp.Body.Close()
-			if err != nil {
-				util.LogWarn("proxyer:%s http read err:%v", self.Url, err)
-				return
-			}
-			self.cookies = self.getCookie(string(data))
-		} else {
-			util.LogWarn("proxyer:%s http status err:%v", self.Url, resp.StatusCode)
-		}
-		return
-	}
-
-	data, err := ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	if err != nil {
-		util.LogWarn("proxyer:%s http read err:%v", self.Url, err)
-		return
-	}
-
+	data := self.httpGet()
+	self.cookies = self.getCookie(string(data))
 	proxies := self.regexp.FindAll(data, -1)
 	if len(proxies) < 1 {
 		util.LogWarn("proxyer:%s regexp find failed", self.Url)
@@ -84,6 +49,9 @@ func (self *Ip66) load() {
 
 func (self *Ip66) getCookie(data string) string {
 	fun := self.fun.FindSubmatch([]byte(data))
+	if len(fun) < 2 {
+		return self.cookies
+	}
 	funstr := strings.Replace(string(fun[0]), `eval("qo=eval;qo(po);");`, "return po;", 1)
 	funstr = fmt.Sprintf("%s po = %s(%s);", funstr, fun[1], self.param.FindSubmatch([]byte(data))[1])
 	self.jsRuner.Run(funstr)
